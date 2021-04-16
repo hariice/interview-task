@@ -11,12 +11,7 @@ const Menucomponent = () => {
     return (
         <>
         <Menu  mode="horizontal">
-        <Menu.Item key="home" icon={<HomeOutlined /> }>
-        <Link to="/home">
-                Home
-        </Link>
         
-        </Menu.Item>
         <Menu.Item key="Table"  icon={<TableOutlined />}>
         <Link to="/table">
                 Table
