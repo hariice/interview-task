@@ -9,52 +9,15 @@ const Tables = () => {
     const [DataSourceOrg, setDataSourceOrg] = useState([]);
 
     const [options, setOptions] = useState([]);
-    const [filterValue, setFilterValue] = useState(undefined);
-    const columns = [
-        {
-            title: 'project_id',
-            dataIndex: 'project_id',
-            key: 'project_id',
-        },
-        {
-            title: 'project_code',
-            dataIndex: 'project_code',
-            key: 'project_code',
-        },
-        {
-            title: 'description',
-            dataIndex: 'description',
-            key: 'description',
-        },
-        {
-            title: 'start_date',
-            dataIndex: 'start_date',
-            key: 'start_date',
-        },
-        {
-            title: 'end_date',
-            dataIndex: 'end_date',
-            key: 'end_date',
-        },
-
-        {
-            title: 'company_name',
-            dataIndex: 'company_name',
-            key: 'company_name',
-        },
-
-        {
-            title: 'status',
-            dataIndex: 'status',
-            key: 'status',
-        },
-    ];
+    const [filterValue, setFilterValue] = useState("All");
+    const [column, setColumn] = useState([]);
 
     useEffect(() => {
         fetch("http://timeapi.kaaylabs.com/api/v1/project_view/")
             .then(res => res.json())
             .then(dataSource => {
                 const arr = [];
+                arr.push("All");
                 dataSource.data.forEach(item => {
                     if (!arr.includes(item.status)) {
                         arr.push(item.status);
@@ -67,12 +30,22 @@ const Tables = () => {
                     //     }
                 })
 
+                let columns = dataSource.metadata.columns;
+              columns=  columns.map(item=>{
+                    if(item.title == "Project Name"){
+                        item.dataIndex = "project_code"
+                    }
+                    return item;
+                })
+
                 setOptions(arr);
+                setColumn(columns);
                 setDataSource(dataSource.data);
                 setDataSourceOrg(dataSource.data);
             })
 
             .catch(err => console.log(err))
+            
     }, []);
 
 
@@ -80,7 +53,7 @@ const Tables = () => {
         console.log(name);
 
 
-        if (!name) {
+        if (!name || name === "All") {
             setDataSource(DataSourceOrg)
         } else {
             let newData = DataSourceOrg;
@@ -100,11 +73,9 @@ const Tables = () => {
     return (
 
         <div className="main-tab">
-            <Form.Item
-                lable="Filter"
-                name="Select"
-            >
-                <Select
+            
+               
+               <div className="slt" >Filter <Select
                     onChange={(e) => {
                         setFilterValue(e);
                         Filter(e);
@@ -117,8 +88,8 @@ const Tables = () => {
 
                     ))}
                 </Select>
-
-            </Form.Item>
+</div>
+            
 
             <div className="container">
 
@@ -155,7 +126,7 @@ const Tables = () => {
 
                 </table> */}
 
-                <Table dataSource={dataSource} columns={columns} />;
+                <Table dataSource={dataSource} columns={column} />;
 
 
             </div>
